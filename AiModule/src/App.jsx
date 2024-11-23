@@ -6,29 +6,30 @@ function App() {
 	const [prompt, setPrompt] = useState("")
 	const [response, setResponse] = useState("")
 
-	const handleSubmit = (e)=>{
-		e.preventDefault()
-
-		axios.post("http://localhost:8000/chat",{prompt}).then((res)=>{
-			setResponse(res.data)
-		}).catch((err)=>{
-			console.log(err);
-			
-		})
+	const handleSubmit = async()=>{
+		try {
+            const result = await axios.post("http://localhost:5000/generate", { prompt });
+            setResponse(result.data.generated_text);
+        } catch (error) {
+            console.error("Error generating text:", error);
+        }
 	}
 	return (
 		<>
 			<div>
-				<form onSubmit={handleSubmit}>
 
 				<textarea type="text" value={prompt} onChange={(e)=>setPrompt(e.target.value)}></textarea>
 				<div className="btns">
 
-				<button>Experience</button>
+				<button onClick={handleSubmit}>Experience</button>
 				<button>Designation</button>
 				</div>
-				</form>
-				<p>{response}</p>
+				{/* </form> */}
+				{response && (
+                <div style={{ marginTop: "20px", padding: "10px", border: "1px solid #ddd" }}>
+                    <h3>Generated Text:</h3>
+                    <p>{response}</p>
+                </div>)}
 			</div>
 		</>
 	)
